@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="de" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThumbCraft AI - KI Thumbnail Generator</title>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom": "https://esm.sh/react-dom@^19.2.4/client",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            animation: {
+              'shimmer': 'shimmer 2.5s infinite linear',
+              'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'glow-dance': 'glow-dance 10s infinite alternate ease-in-out',
+              'float': 'float 6s ease-in-out infinite',
+              'float-delayed': 'float 6s ease-in-out infinite 2s',
+              'float-slow': 'float 12s ease-in-out infinite',
+              'float-reverse': 'float-reverse 10s ease-in-out infinite',
+              'spin-slow': 'spin 15s linear infinite',
+              'drift': 'drift 20s linear infinite',
+              'float-complex': 'float-complex 15s ease-in-out infinite',
+              'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
+              'button-pop': 'button-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+              'scroll': 'scroll 40s linear infinite',
+            },
+            keyframes: {
+              shimmer: {
+                '0%': { transform: 'translateX(-100%) skewX(-20deg)' },
+                '100%': { transform: 'translateX(250%) skewX(-20deg)' }
+              },
+              scroll: {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(calc(-250px * 7))' }
+              },
+              'glow-dance': {
+                '0%': { transform: 'translate(0, 0) scale(1)', opacity: '0.4' },
+                '100%': { transform: 'translate(5%, 5%) scale(1.15)', opacity: '0.7' }
+              },
+              'float': {
+                '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                '50%': { transform: 'translateY(-30px) rotate(3deg)' }
+              },
+              'float-reverse': {
+                '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                '50%': { transform: 'translateY(30px) rotate(-3deg)' }
+              },
+              'drift': {
+                '0%': { transform: 'translateX(0) translateY(0)' },
+                '50%': { transform: 'translateX(50px) translateY(30px)' },
+                '100%': { transform: 'translateX(0) translateY(0)' }
+              },
+              'float-complex': {
+                '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+                '33%': { transform: 'translate(30px, -50px) rotate(5deg)' },
+                '66%': { transform: 'translate(-20px, 20px) rotate(-5deg)' }
+              },
+              'pulse-glow': {
+                '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+                '50%': { opacity: '0.6', transform: 'scale(1.1)' }
+              },
+              'button-pop': {
+                '0%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+                '100%': { transform: 'scale(1)' }
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Outfit', sans-serif;
+      }
+      
+      .dark body { 
+        background-color: #1e293b; 
+        color: #f8fafc;
+      }
+
+      .gradient-brand {
+        background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 30px rgba(249, 115, 22, 0.4));
+      }
+
+      button {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
+      }
+
+      .glass-float {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.05);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(249, 115, 22, 0.5);
+      }
+
+    </style>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
